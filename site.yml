@@ -34,7 +34,7 @@
          region: "us-east-1"
          group_id: "{{ firewall_sg.group_id }}"
          instance_type: "t2.micro"
-         image: ami-0b0ea68c435eb488d
+         image: ami-0b0af3577fe5e3532 ## AMi for RHEL free tier vm
          wait: yes
          count_tag: Name
          exact_count: 1
