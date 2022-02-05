@@ -1,0 +1,46 @@
+---
+- hosts: all
+  name: Automation of EC2 instance
+  remote_user: root
+  gather_facts: false
+  tasks:
+    - name: Create ec2
+      amazon.aws.ec2_group:
+       name: aws_instance_Ansible
+       description: "ajeet-test security group"
+       region: us-east-1
+       rules:
+        - proto: tcp
+          from_port: 80
+          to_port: 80
+          cidr_ip: 0.0.0.0/0
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 0.0.0.0/0
+       rules_egress:
+        - proto: all
+          cidr_ip: 0.0.0.0/0
+          
+      register: firewall_sg
+    - name: Create a new EC2 key
+      ec2_key:
+         name: "ajeet-test-key"
+         region: "us-east-1"
+         key_material: "{{ lookup('file', '/home/ajeet/.ssh/id_rsa.pub') }}"
+    - name: Create an EC2 instance
+      ec2:
+         key_name: "ajeet-test-key"
+         region: "us-east-1"
+         group_id: "{{ firewall_sg.group_id }}"
+         instance_type: "t2.micro"
+         image: ami-0b0ea68c435eb488d
+         wait: yes
+         count_tag: Name
+         exact_count: 1
+         vpc_subnet_id: subnet-0a3aff513f0e62563
+         assign_public_ip: yes
+         
+
+     
+          
