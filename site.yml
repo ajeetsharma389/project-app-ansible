@@ -40,6 +40,53 @@
          exact_count: 1
          vpc_subnet_id: subnet-0a3aff513f0e62563
          assign_public_ip: yes
+    - name : Add instance to host group
+      add_host:
+          hostname: "{{ item.public_ip }}"
+          groupname: launched
+      loop: "{{ ec2.instances }}"
+      
+    - name: "refresh_inventory"
+      meta: refresh_inventory
+      
+    - pause:
+        minutes: 1  
+  
+  
+- hosts: all
+
+  gather_facts: no
+  tasks:
+  - name: Apache latest version installation
+    dnf:
+      name: httpd
+      state: latest
+  - name: remove the Apache package
+    dnf:
+      name: httpd
+      state: absent
+  - name: Enable service to start on boot up
+    dnf:
+      name: httpd
+      enablerepo: testing
+      state: present
+  - name: install latest version oa apache
+    dnf:
+      name: "*"
+      state: latest
+      
+  - name: Create firewall rule for apache service
+    firewalld:
+      service: http
+      zone: public
+      permanent: yes
+      immediate: yes
+      state: enabled
+  handlers:
+  - name: Restart apache service
+    service:
+      name: httpd
+      state: restarted
          
 
      
