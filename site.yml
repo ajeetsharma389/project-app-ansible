@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: local
   name: Automation of EC2 instance
   remote_user: root
   gather_facts: false
