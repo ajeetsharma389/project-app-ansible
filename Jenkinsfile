@@ -1,11 +1,22 @@
-pipeline{
+pipeline {
+  agent any
 
-stages{
-
-stage('Test'){
-echo "Hello"
-
+  stages {
+    stage("One") {
+      steps {
+        echo "Hello"
+      }
+    }
+    stage("Evaluate Master") {
+      when {
+        // skip this stage unless on Master branch
+        branch "feature"
+      }
+      steps {
+        echo "World"
+        echo "Heal it"
+      }
+    }
+  }
 }
-
-
-}
+Footer
